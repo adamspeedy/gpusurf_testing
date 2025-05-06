@@ -36,7 +36,6 @@ int main(int argc, char* argv[])
     cv::setTrackbarPos("regionsHorizontal", "GpuSurf", 1);
     cv::setTrackbarPos("regionsTarget", "GpuSurf", 8192);
 
-
     cout << "Hello World! \n";
     cv::Mat img1 = cv::imread("/home/adam/Desktop/new_left/image_100.png", 0);
     cv::Mat img2 = cv::imread("/home/adam/Desktop/new_right/image_100.png", 0);
@@ -56,7 +55,6 @@ int main(int argc, char* argv[])
         int regionsVertical = cv::getTrackbarPos("regionsVertical", "GpuSurf");
         int regionsHorizontal = cv::getTrackbarPos("regionsHorizontal", "GpuSurf");
         int regionsTarget = cv::getTrackbarPos("regionsTarget", "GpuSurf");
-
 
         GpuSurfConfiguration config;
         config.threshold = thresh;
@@ -78,7 +76,6 @@ int main(int argc, char* argv[])
         config.regions_vertical = regionsVertical;
         config.regions_target = regionsTarget;
 
-
         GpuSurfDetector detector1(config);
         detector1.buildIntegralImage(img1);
         detector1.detectKeypoints();
@@ -91,8 +88,6 @@ int main(int argc, char* argv[])
         vector<float> descriptors1;
         detector1.getDescriptors(descriptors1);
 
-       
-
         GpuSurfDetector detector2(config);
         detector2.buildIntegralImage(img2);
         detector2.detectKeypoints();
@@ -103,10 +98,9 @@ int main(int argc, char* argv[])
         detector2.computeDescriptors(false);
         vector<float> descriptors2;
         detector2.getDescriptors(descriptors2);
-        
+
         // I can see that we get about 64 descriptors for each keypoint
         std::cout << "Keypoints left: " << keypoints1.size() << "   Keypoints right: "  << keypoints2.size()  << std::endl;
-
 
         //convert the descriptors to cv::Mat
         int descriptor_length = 64;  // For SURF, typically 64 or 128
