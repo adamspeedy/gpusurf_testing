@@ -82,8 +82,11 @@ int main(int argc, char* argv[])
 
 
     cout << "Hello World! \n";
-    cv::Mat img1 = cv::imread("/home/adam/Desktop/new_left/image_100.png", 0);
-    cv::Mat img2 = cv::imread("/home/adam/Desktop/new_right/image_100.png", 0);
+    // cv::Mat img1 = cv::imread("/home/adam/Desktop/new_left/image_100.png", 0);
+    // cv::Mat img2 = cv::imread("/home/adam/Desktop/new_right/image_100.png", 0);
+
+    cv::Mat img1 = cv::imread("/home/adam/ros_ws/src/bag_image_extractor/output_dir/left/image_0010.png", 0);
+    cv::Mat img2 = cv::imread("/home/adam/ros_ws/src/bag_image_extractor/output_dir/right/image_0010.png", 0);
     if(img1.empty())
     {
         std::cout << "Could not read the image " << std::endl;
