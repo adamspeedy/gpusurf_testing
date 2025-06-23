@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 {
     //Set up the trackbar
     cv::namedWindow("GpuSurf", cv::WINDOW_NORMAL);
-    cv::createTrackbar("Threshold/10", "GpuSurf", nullptr, 10, onTrackbar);
+    cv::createTrackbar("Threshold/10", "GpuSurf", nullptr, 10000, onTrackbar);
     cv::createTrackbar("nOctaves", "GpuSurf", nullptr, 32, onTrackbar);
     cv::createTrackbar("nIntervals", "GpuSurf", nullptr, 32, onTrackbar);
     cv::createTrackbar("initialScale", "GpuSurf", nullptr, 8, onTrackbar);
@@ -25,6 +25,9 @@ int main(int argc, char* argv[])
     cv::createTrackbar("regionsVertical", "GpuSurf", nullptr, 32, onTrackbar);
     cv::createTrackbar("regionsHorizontal", "GpuSurf", nullptr, 32, onTrackbar);
     cv::createTrackbar("regionsTarget", "GpuSurf", nullptr, 10000, onTrackbar);
+
+    cv::createTrackbar("image_number_left", "GpuSurf", nullptr, 300, onTrackbar);
+    cv::createTrackbar("image_number_right", "GpuSurf", nullptr, 300, onTrackbar);
 
     cv::setTrackbarPos("Threshold/10", "GpuSurf", 1);
     cv::setTrackbarPos("nOctaves", "GpuSurf", 4);
@@ -36,17 +39,20 @@ int main(int argc, char* argv[])
     cv::setTrackbarPos("regionsHorizontal", "GpuSurf", 1);
     cv::setTrackbarPos("regionsTarget", "GpuSurf", 8192);
 
-    cout << "Hello World! \n";
-    cv::Mat img1 = cv::imread("/home/adam/Desktop/new_left/image_100.png", 0);
-    cv::Mat img2 = cv::imread("/home/adam/Desktop/new_right/image_100.png", 0);
-    if(img1.empty())
-    {
-        std::cout << "Could not read the image " << std::endl;
-        return 1;
-    }
+    cv::setTrackbarPos("image_number_left", "GpuSurf", 40);
+    cv::setTrackbarPos("image_number_right", "GpuSurf", 40);
+
+    // cout << "Hello World! \n";
+    // cv::Mat img1 = cv::imread("/home/adam/Desktop/new_left/image_100.png", 0);
+    // cv::Mat img2 = cv::imread("/home/adam/Desktop/new_right/image_100.png", 0);
+    // if(img1.empty())
+    // {
+    //     std::cout << "Could not read the image " << std::endl;
+    //     return 1;
+    // }
 
     while (true) {
-        float thresh = cv::getTrackbarPos("Threshold/10", "GpuSurf")/10.0f;
+        float thresh = cv::getTrackbarPos("Threshold/10", "GpuSurf")/10000.0f;
         int nOctaves = cv::getTrackbarPos("nOctaves", "GpuSurf");
         int nIntervals = cv::getTrackbarPos("nIntervals", "GpuSurf");
         float initialScale = cv::getTrackbarPos("initialScale", "GpuSurf");
@@ -55,6 +61,21 @@ int main(int argc, char* argv[])
         int regionsVertical = cv::getTrackbarPos("regionsVertical", "GpuSurf");
         int regionsHorizontal = cv::getTrackbarPos("regionsHorizontal", "GpuSurf");
         int regionsTarget = cv::getTrackbarPos("regionsTarget", "GpuSurf");
+
+        int image_number_left = cv::getTrackbarPos("image_number_left", "GpuSurf");
+        int image_number_right = cv::getTrackbarPos("image_number_right", "GpuSurf");
+        if (image_number_left < 1) {
+            image_number_left = 1;
+        }
+        if (image_number_right < 1) {
+            image_number_right = 1;
+        }
+        char filepath_left[256], filepath_right[256];
+        std::sprintf(filepath_left, "/home/adam/Desktop/matlab_images/lab_bumblebee_images/left/image_%06d.png", image_number_left);
+        std::sprintf(filepath_right, "/home/adam/Desktop/matlab_images/lab_bumblebee_images/right/image_%06d.png", image_number_right);
+        cv::Mat img1 = cv::imread(filepath_left, 0);
+        cv::Mat img2 = cv::imread(filepath_right, 0);
+
 
         GpuSurfConfiguration config;
         config.threshold = thresh;
@@ -124,7 +145,6 @@ int main(int argc, char* argv[])
                 return a.distance < b.distance;
         });
         std::vector<cv::DMatch> best_matches(matches.begin(), matches.begin() + std::min(matches.size(), size_t(100)));
-
         // drawing the results
         cv::namedWindow("matches", 1);
         cv::Mat img_matches;
