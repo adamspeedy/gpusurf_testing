@@ -64,6 +64,9 @@ int main(int argc, char* argv[])
     cv::createTrackbar("stereoYTolerance/10", "GpuSurf", nullptr, 10, onTrackbar);
     cv::createTrackbar("stereoScaleTolerance/10", "GpuSurf", nullptr, 10 , onTrackbar);
 
+    cv::createTrackbar("image_number_left", "GpuSurf", nullptr, 300, onTrackbar);
+    cv::createTrackbar("image_number_right", "GpuSurf", nullptr, 300, onTrackbar);
+
     cv::setTrackbarPos("Threshold/10000", "GpuSurf", 1);
     cv::setTrackbarPos("nOctaves", "GpuSurf", 4);
     cv::setTrackbarPos("nIntervals", "GpuSurf", 4);
@@ -80,21 +83,24 @@ int main(int argc, char* argv[])
     cv::setTrackbarPos("stereoYTolerance/10", "GpuSurf", 9);
     cv::setTrackbarPos("stereoScaleTolerance/10", "GpuSurf", 1);
 
+    cv::setTrackbarPos("image_number_left", "GpuSurf", 40);
+    cv::setTrackbarPos("image_number_right", "GpuSurf", 40);
+
 
     cout << "Hello World! \n";
     // cv::Mat img1 = cv::imread("/home/adam/Desktop/new_left/image_100.png", 0);
     // cv::Mat img2 = cv::imread("/home/adam/Desktop/new_right/image_100.png", 0);
 
-    cv::Mat img1 = cv::imread("/home/adam/ros_ws/src/bag_image_extractor/output_dir/left/image_0010.png", 0);
-    cv::Mat img2 = cv::imread("/home/adam/ros_ws/src/bag_image_extractor/output_dir/right/image_0010.png", 0);
-    if(img1.empty())
-    {
-        std::cout << "Could not read the image " << std::endl;
-        return 1;
-    }
+    // cv::Mat img1 = cv::imread("/home/adam/ros_ws/src/bag_image_extractor/output_dir/left/image_0010.png", 0);
+    // cv::Mat img2 = cv::imread("/home/adam/ros_ws/src/bag_image_extractor/output_dir/right/image_0010.png", 0);
+    // if(img1.empty())
+    // {
+    //     std::cout << "Could not read the image " << std::endl;
+    //     return 1;
+    // }
 
     while (true) {
-        float thresh = cv::getTrackbarPos("Threshold/10000", "GpuSurf")/10.0f;
+        float thresh = cv::getTrackbarPos("Threshold/10000", "GpuSurf")/10000.0f;
         int nOctaves = cv::getTrackbarPos("nOctaves", "GpuSurf");
         int nIntervals = cv::getTrackbarPos("nIntervals", "GpuSurf");
         float initialScale = cv::getTrackbarPos("initialScale", "GpuSurf");
@@ -109,7 +115,19 @@ int main(int argc, char* argv[])
         float stereoYTolerance = cv::getTrackbarPos("stereoYTolerance/10", "GpuSurf")/10.0f;
         float stereoScaleTolerance = cv::getTrackbarPos("stereoScaleTolerance/10", "GpuSurf")/10.0f;
 
-
+        int image_number_left = cv::getTrackbarPos("image_number_left", "GpuSurf");
+        int image_number_right = cv::getTrackbarPos("image_number_right", "GpuSurf");
+        if (image_number_left < 1) {
+            image_number_left = 1;
+        }
+        if (image_number_right < 1) {
+            image_number_right = 1;
+        }
+        char filepath_left[256], filepath_right[256];
+        std::sprintf(filepath_left, "/home/adam/Desktop/matlab_images/lab_bumblebee_images/left/image_%06d.png", image_number_left);
+        std::sprintf(filepath_right, "/home/adam/Desktop/matlab_images/lab_bumblebee_images/right/image_%06d.png", image_number_right);
+        cv::Mat img1 = cv::imread(filepath_left, 0);
+        cv::Mat img2 = cv::imread(filepath_right, 0);
         // stereo matching parameters
         GpuSurfStereoConfiguration configStereo;
         configStereo.stereoDisparityMinimum=stereoDisparityMinimum;
